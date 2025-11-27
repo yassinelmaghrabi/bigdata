@@ -37,6 +37,12 @@ for col in ["Quantity", "Price Per Unit", "Total Spent"]:
     if df_cleaned[col].isnull().any():
         df_cleaned[col].fillna(df_cleaned[col].median(), inplace=True)
 
+
+df_cleaned = df_cleaned[
+    (df_cleaned["Quantity"].between(lower_bound, upper_bound))
+    & (df_cleaned["Price Per Unit"].between(lower_bound, upper_bound))
+]
+
 initial_rows = df_cleaned.shape[0]
 df_cleaned.drop_duplicates(inplace=True)
 
@@ -65,3 +71,11 @@ df_cleaned.info()
 
 output_file_path = "cafe_sales_cleaned.csv"
 df_cleaned.to_csv(output_file_path, index=False)
+df_no_unknown = df_cleaned.copy()
+
+cols_to_check = ["Item", "Payment Method", "Location"]
+for col in cols_to_check:
+    df_no_unknown = df_no_unknown[df_no_unknown[col] != "unknown"]
+
+output_file_no_unknown = "cafe_sales_no_unknown.csv"
+df_no_unknown.to_csv(output_file_no_unknown, index=False)
